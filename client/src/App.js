@@ -2,7 +2,7 @@
 // import "./public/css/style.css";
 import config from "./config.json";
 import React, { Component } from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Link, Route, Switch, Redirect } from "react-router-dom";
 import Home from "./components/home";
 import Navbar from "./components/navBar";
 import NotFound from "./components/notFound";
@@ -10,6 +10,7 @@ import NotFound from "./components/notFound";
 import axios from "axios";
 
 const endpoint = "http://localhost:3000/upload";
+const endpoint2 = "http://localhost:3000/logout";
 
 class App extends Component {
   constructor() {
@@ -81,29 +82,126 @@ class App extends Component {
         console.log(res.statusText);
       });
   };
-  logout = () => {
+  handleLogout = () => {
     axios
-      .post("http://localhost:3000/logout", { withCredentials: true })
+      .get(endpoint2, { withCredentials: true })
       .then(result => {
-        this.setState({ loggedInUser: null });
+        console.log(result);
+        this.setState({ isLoggedIn: null });
       })
       .catch(error => {
         console.log(error);
       });
   };
   render() {
-    if (this.state.loggedIn) {
+    if (this.state.isLoggedIn) {
       return (
-        <div id="wrapper">
-          <section />
-        </div>
+        <header className="masthead">
+          <div className="container h-100">
+            <div className="row h-100">
+              <div className="col-lg-7 my-auto">
+                <div className="header-content mx-auto">
+                  <div className="App">
+                    {/* <Navbar userInSession={this.state.isLoggedIn} /> */}
+                    <input
+                      type="file"
+                      name=""
+                      id=""
+                      onChange={this.handleselectedFile}
+                    />
+                    <button onClick={this.handleUpload}>Upload</button>
+                    <div> {Math.round(this.state.loaded, 2)} %</div>
+                    <Link to="/">
+                      <button onClick={this.handleLogout}>Logout</button>
+                    </Link>
+                  </div>
+
+                  <form role="form" class="form">
+                    <div className="form-group">
+                      <label for="file">File</label>
+                      <input
+                        id="file"
+                        type="file"
+                        name=""
+                        className="form-control"
+                        accept=".jpg,.jpeg,.gif,.png"
+                      />
+                    </div>
+                    <button
+                      onClick={this.handleUpload}
+                      id="color_detect"
+                      type="button"
+                      className="btn btn-primary"
+                    >
+                      Get Colours
+                    </button>
+                  </form>
+
+                  <button
+                    onClick={this.handleLogout}
+                    className="btn btn-outline btn-xl js-scroll-trigger"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+              <div className="col-lg-5 my-auto">
+                <div className="device-container">
+                  <div className="device-mockup iphone6_plus portrait white">
+                    <div className="device">
+                      <div className="screen">
+                        <img
+                          src="img/demo-screen-1.jpg"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <div className="button" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
       );
     } else {
       return (
-        <div className="App">
-          {/* <Navbar userInSession={this.state.isLoggedIn} /> */}
-          <a href={`${config.backendUrl}user/auth/spotify`}> Spotify </a>
-        </div>
+        <header className="masthead">
+          <div className="container h-100">
+            <div className="row h-100">
+              <div className="col-lg-7 my-auto">
+                <div className="header-content mx-auto">
+                  <h1 className="mb-5">
+                    MoodPlay plays music based on your mood...{" "}
+                  </h1>
+                  <a
+                    href={`${config.backendUrl}user/auth/spotify`}
+                    className="btn btn-outline btn-xl js-scroll-trigger"
+                  >
+                    Login with Spotify
+                  </a>
+                </div>
+              </div>
+              <div className="col-lg-5 my-auto">
+                <div className="device-container">
+                  <div className="device-mockup iphone6_plus portrait white">
+                    <div className="device">
+                      <div className="screen">
+                        <img
+                          src="img/demo-screen-1.jpg"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <div className="button" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
       );
     }
   }

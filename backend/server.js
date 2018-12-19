@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
@@ -12,11 +13,10 @@ const passport = require("passport");
 const SpotifyStrategy = require("./lib/passport-spotify/index").Strategy;
 const appKey = "4184cfefa27d4bfaa7b5affd6d1e0b91";
 const appSecret = "a8bbbabd663a43fc9efa6128ef4db883";
-
 const API_PORT = 3001;
 const app = express();
 const router = express.Router();
-
+const serveStatic = require("serve-static");
 // var cors = require("cors");
 // app.use(
 //   cors({
@@ -24,6 +24,9 @@ const router = express.Router();
 //     credentials: true
 //   })
 // );
+
+// var cors = require("cors");
+// app.use(cors());
 
 app.use(
   require("cors")({
@@ -41,7 +44,7 @@ app.use(
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 
-app.use(fileUpload());
+// app.use(fileUpload());
 app.use("/public", express.static(__dirname + "/public"));
 
 // this is our MongoDB database
@@ -94,7 +97,7 @@ const vision = require("@google-cloud/vision");
 
 // Creates a client
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: "MoodPlay-eaa256002299.json"
+  keyFilename: "moodplay-225408.json"
 });
 //const request = { image: { source: { filename: inputFile } } };
 // Performs label detection on the image file
@@ -111,26 +114,28 @@ main().catch(err => {
 });
 // [END vision_quickstart]
 
-client
-  .faceDetection("./images/9.jpg")
-  .then(results => {
-    const faces = results[0].faceAnnotations;
+app.post("/upload", upload.single("file"), function(req, res, next) {
+  client
+    .faceDetection(req.file.path)
+    .then(results => {
+      const faces = results[0].faceAnnotations;
 
-    const numFaces = faces.length;
-    console.log("Found " + numFaces + (numFaces === 1 ? " face" : " faces"));
+      const numFaces = faces.length;
+      console.log("Found " + numFaces + (numFaces === 1 ? " face" : " faces"));
 
-    console.log("Faces:");
-    faces.forEach((face, i) => {
-      console.log(`  Face #${i + 1}:`);
-      console.log(`    Joy: ${face.joyLikelihood}`);
-      console.log(`    Anger: ${face.angerLikelihood}`);
-      console.log(`    Sorrow: ${face.sorrowLikelihood}`);
-      console.log(`    Surprise: ${face.surpriseLikelihood}`);
+      console.log("Faces:");
+      faces.forEach((face, i) => {
+        console.log(`  Face #${i + 1}:`);
+        console.log(`    Joy: ${face.joyLikelihood}`);
+        console.log(`    Anger: ${face.angerLikelihood}`);
+        console.log(`    Sorrow: ${face.sorrowLikelihood}`);
+        console.log(`    Surprise: ${face.surpriseLikelihood}`);
+      });
+    })
+    .catch(err => {
+      console.error("ERROR:", err);
     });
-  })
-  .catch(err => {
-    console.error("ERROR:", err);
-  });
+});
 
 function checkAuthentication(req, res, next) {
   if (req.isAuthenticated()) {
@@ -249,8 +254,6 @@ app.use(
   })
 );
 
-// app.listen(8888);
-
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
 //   the request is authenticated (typically via a persistent login session),
@@ -263,7 +266,21 @@ function ensureAuthenticated(req, res, next) {
   res.redirect("/login");
 }
 
-app.post("/upload", (req, res, next) => {
+app.get("/logout", function(req, res) {
+  req.logout();
+  req.session.destroy(function(err) {
+    if (!err) {
+      res
+        .status(200)
+        .clearCookie("connect.sid", { path: "/" })
+        .json({ status: "Success" });
+    } else {
+      // handle error case...
+    }
+  });
+});
+
+app.post("/upload2", (req, res, next) => {
   let uploadFile = req.files.file;
   const fileName = req.files.file.name;
   uploadFile.mv(`${__dirname}/public/files/${fileName}`, function(err) {
@@ -281,6 +298,6 @@ app.post("/upload", (req, res, next) => {
 
 // append /api for our http requests
 //app.use("/api", router);
-
+app.use(serveStatic(path.join(__dirname, "public")));
 // launch our backend into a port
 app.listen(API_PORT, () => console.log(`LISTENING ON PORT ${API_PORT}`));
