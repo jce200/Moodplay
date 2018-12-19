@@ -454,6 +454,8 @@ footer ul li a.active {
   border: #1db954;
 }
 
+.white_bg { background-color: white; }
+
 .fs30 {
   font-size: 80px;
 }

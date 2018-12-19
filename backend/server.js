@@ -10,6 +10,7 @@ var config = require("./config.json");
 const fileUpload = require("express-fileupload");
 const session = require("express-session");
 const passport = require("passport");
+const axios = require("axios");
 const SpotifyStrategy = require("./lib/passport-spotify/index").Strategy;
 const appKey = "4184cfefa27d4bfaa7b5affd6d1e0b91";
 const appSecret = "a8bbbabd663a43fc9efa6128ef4db883";
@@ -17,6 +18,7 @@ const API_PORT = 3001;
 const app = express();
 const router = express.Router();
 const serveStatic = require("serve-static");
+
 // var cors = require("cors");
 // app.use(
 //   cors({
@@ -79,11 +81,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+  done(null, user);
 });
 
-passport.deserializeUser(function(obj, done) {
-  User.findById(obj).then(user => {
+passport.deserializeUser(function(user, done) {
+  User.findOne({ spotifyId: user.spotifyId }).then(userFound => {
     done(null, user);
   });
 });
@@ -101,20 +103,22 @@ const client = new vision.ImageAnnotatorClient({
 });
 //const request = { image: { source: { filename: inputFile } } };
 // Performs label detection on the image file
-async function main() {
-  const [result] = await client.labelDetection("./images/9.jpg");
+// async function main() {
+//   const [result] = await client.labelDetection("./images/9.jpg");
 
-  const labels = result.labelAnnotations;
+//   const labels = result.labelAnnotations;
 
-  console.log("Labels:");
-  labels.forEach(label => console.log(label.description));
-}
-main().catch(err => {
-  console.error("ERROR:", err);
-});
+//   console.log("Labels:");
+//   labels.forEach(label => console.log(label.description));
+// }
+// main().catch(err => {
+//   console.error("ERROR:", err);
+// });
 // [END vision_quickstart]
 
 app.post("/upload", upload.single("file"), function(req, res, next) {
+  var token = req.session.passport.user.accessToken;
+  debugger;
   client
     .faceDetection(req.file.path)
     .then(results => {
@@ -123,19 +127,84 @@ app.post("/upload", upload.single("file"), function(req, res, next) {
       const numFaces = faces.length;
       console.log("Found " + numFaces + (numFaces === 1 ? " face" : " faces"));
 
-      console.log("Faces:");
-      faces.forEach((face, i) => {
-        console.log(`  Face #${i + 1}:`);
-        console.log(`    Joy: ${face.joyLikelihood}`);
-        console.log(`    Anger: ${face.angerLikelihood}`);
-        console.log(`    Sorrow: ${face.sorrowLikelihood}`);
-        console.log(`    Surprise: ${face.surpriseLikelihood}`);
-      });
+      const joy = results[0].faceAnnotations[0].joyLikelihood;
+      const sorrow = results[0].faceAnnotations[0].sorrowLikelihood;
+      const anger = results[0].faceAnnotations[0].angerLikelihood;
+
+      if (joy === "VERY_LIKELY") {
+        min_valence === "0.85";
+        max_valence === "1";
+        min_dance === "0.8";
+        max_dance === "1";
+      }
+      if (
+        joy === "LIKELY" &&
+        (sorrow === "VERY_UNLIKELY" || sorrow === "UNLIKELY")
+      ) {
+        min_valence === "0.65";
+        max_valence === "0.8";
+        min_dance === "0.5";
+        max_dance === "0.7";
+      }
+      // if (sorrow === "VERY_LIKELY") {
+      //   valence === "0.85";
+      //   dance === "0.8";
+      // }
+      // UNKNOWN;
+      // VERY_UNLIKELY;
+      // UNLIKELY;
+      // POSSIBLE;
+      // LIKELY;
+      // VERY_LIKELY;
+
+      debugger;
+
+      // const joyLikelihood = res.data[0].faceAnnotations[0].joyLikelihood;
+
+      // console.log("Faces:");
+      // faces.forEach((face, i) => {
+      //   console.log(`  Face #${i + 1}:`);
+      //   console.log(`    Joy: ${face.joyLikelihood}`);
+      //   console.log(`    Anger: ${face.angerLikelihood}`);
+      //   console.log(`    Sorrow: ${face.sorrowLikelihood}`);
+      //   console.log(`    Surprise: ${face.surpriseLikelihood}`);
+      // });
+      // res.send(JSON.stringify(results));
+      return Promise.resolve(results);
+    })
+    .then(results => {
+      return axios.get(
+        `https://api.spotify.com/v1/recommendations?limit=20&seed_genres=dance%2Celectronic%2Cpop%2Chouse%2Ctrance&min_valence=0.3&max_valence=1`,
+        {
+          headers: { Authorization: "Bearer " + token }
+        }
+      );
+    })
+    .then(response => {
+      console.log(response);
+      debugger;
+      res.json(response.data.tracks);
     })
     .catch(err => {
       console.error("ERROR:", err);
     });
 });
+
+// app.get("/findSong", (req, res) => {
+//   axios
+//     .get(
+//       "https://api.spotify.com/v1/recommendations?limit=20&seed_genres=dance%2Celectronic%2Cpop%2Chouse%2Ctrance&min_danceability=0.7&min_valence=0.85",
+//       {
+//         headers: { Authorization: "Bearer " + token }
+//       }
+//     )
+//     .then(response => {
+//       console.log("Dit is response: " + response);
+//     })
+//     .catch(err => {
+//       console.log("Something went wrong... ", err);
+//     });
+// });
 
 function checkAuthentication(req, res, next) {
   if (req.isAuthenticated()) {
@@ -157,19 +226,24 @@ passport.use(
       callbackURL: `${config.baseUrl}user/auth/spotify/callback/`
     },
     function(accessToken, refreshToken, expires_in, profile, done) {
-      console.log(profile);
+      //  console.log(profile);
+
       // asynchronous verification, for effect...
-      User.findOne({ spotifyId: profile.id }).then(currentUser => {
+      User.findOneAndUpdate(
+        { spotifyId: profile.id },
+        { accessToken: accessToken }
+      ).then(currentUser => {
         if (currentUser) {
           done(null, currentUser);
         } else {
           new User({
             username: profile.displayName,
-            spotifyId: profile.id
+            spotifyId: profile.id,
+            accessToken: accessToken
           })
             .save()
             .then(newUser => {
-              console.log("new user: " + newUser);
+              // console.log("new user: " + newUser);
               done(null, newUser);
             });
         }
@@ -246,13 +320,13 @@ passport.use(
 // );
 
 // ADD SESSION SETTINGS HERE:
-app.use(
-  session({
-    secret: "Some kind of secret",
-    resave: true,
-    saveUninitialized: true
-  })
-);
+// app.use(
+//   session({
+//     secret: "Some kind of secret",
+//     resave: true,
+//     saveUninitialized: true
+//   })
+// );
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
@@ -280,7 +354,7 @@ app.get("/logout", function(req, res) {
   });
 });
 
-app.post("/upload2", (req, res, next) => {
+app.post("/uploadINFOLDER", (req, res, next) => {
   let uploadFile = req.files.file;
   const fileName = req.files.file.name;
   uploadFile.mv(`${__dirname}/public/files/${fileName}`, function(err) {

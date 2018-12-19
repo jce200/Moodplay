@@ -3,33 +3,30 @@ var router = express.Router();
 var passport = require("passport");
 
 function checkAuthentication(req, res, next) {
-  debugger;
   if (req.isAuthenticated()) {
-    debugger;
     next();
   } else {
-    debugger;
     res.redirect("/user/login");
   }
 }
-/* GET home page. */
-router.post("/login", passport.authenticate("local"), function(req, res, next) {
-  debugger;
-  res.redirect("/");
-});
+// /* GET home page. */
+// router.post("/login", passport.authenticate("local"), function(req, res, next) {
+//   debugger;
+//   res.redirect("/");
+// });
 
-router.post(
-  "/login-react",
-  (req, res, next) => {
-    debugger;
-    next();
-  },
-  passport.authenticate("local"),
-  (req, res) => {
-    debugger;
-    res.send(200);
-  }
-);
+// router.post(
+//   "/login-react",
+//   (req, res, next) => {
+//     debugger;
+//     next();
+//   },
+//   passport.authenticate("local"),
+//   (req, res) => {
+//     debugger;
+//     res.send(200);
+//   }
+// );
 
 router.get("/profile", checkAuthentication, function(req, res) {
   res.send("profile" + req.session.passport.user.username);
@@ -49,7 +46,7 @@ router.get("/login", function(req, res) {
 
 router.get("/auth/isloggedin", (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).end();
+    res.send(req.session.passport.user);
   } else res.status(403).end();
 });
 
@@ -60,7 +57,7 @@ router.get("/supersecret", checkAuthentication, function(req, res) {
 router.get(
   "/auth/spotify",
   passport.authenticate("spotify", {
-    scope: ["user-read-email", "user-read-private"],
+    scope: ["user-read-email", "user-read-private", "streaming"],
     showDialog: true
   }),
   function(req, res) {
@@ -70,18 +67,29 @@ router.get(
 );
 
 router.get(
-  "/auth/spotify/callback/",
-  (req, res, next) => {
-    debugger;
-    next();
-  },
-  passport.authenticate("spotify"),
+  "/auth/spotify/callback",
+  passport.authenticate("spotify", { failureRedirect: "/user/cancel" }),
   function(req, res) {
-    // debugger;
-    // res.send("Authenticated with SLACK!")
+    // Successful authentication, redirect home.
     res.redirect("http://localhost:3000/");
   }
 );
+
+// router.get("/cancel", function(req, res) {
+//   res.redirect("http://localhost:3000/");
+// });
+
+// router.get(
+//   "/auth/spotify/callback/",
+//   (req, res, next) => {
+//     debugger;
+//     next();
+//   },
+//   passport.authenticate("spotify"),
+//   function(req, res) {
+//     res.redirect("http://localhost:3000/");
+//   }
+// );
 
 // router.post("/logout", function(req, res) {
 //   req.session.destroy(function(err) {
