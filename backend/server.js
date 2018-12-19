@@ -97,7 +97,7 @@ const vision = require("@google-cloud/vision");
 
 // Creates a client
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: "moodplay-225408.json"
+  keyFilename: "MoodPlay-bb850b52febf.json"
 });
 //const request = { image: { source: { filename: inputFile } } };
 // Performs label detection on the image file

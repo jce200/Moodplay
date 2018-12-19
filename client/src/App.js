@@ -6,6 +6,7 @@ import { Link, Route, Switch, Redirect } from "react-router-dom";
 import Home from "./components/home";
 import Navbar from "./components/navBar";
 import NotFound from "./components/notFound";
+import FileUploader from "./components/fileUpload";
 
 import axios from "axios";
 
@@ -93,6 +94,7 @@ class App extends Component {
         console.log(error);
       });
   };
+
   render() {
     if (this.state.isLoggedIn) {
       return (
@@ -102,21 +104,61 @@ class App extends Component {
               <div className="col-lg-7 my-auto">
                 <div className="header-content mx-auto">
                   <div className="App">
-                    {/* <Navbar userInSession={this.state.isLoggedIn} /> */}
-                    <input
+                    <h1 className="mb-5 monospace">Play your mood... </h1>
+                    <div className="monospace fs30">
+                      {" "}
+                      {Math.round(this.state.loaded, 2)} %
+                    </div>
+                    <div className="input-group">
+                      <div className="file-input-wrapper">
+                        <button className="btn-file-input green">
+                          Upload File
+                        </button>
+                        <input
+                          type="file"
+                          name="file"
+                          onChange={this.handleselectedFile}
+                        />
+                      </div>
+                      <span className="input-group-btn">
+                        <button
+                          className="btn btn-default ml-3"
+                          type="button"
+                          onClick={this.handleUpload}
+                        >
+                          Go!
+                        </button>
+                      </span>
+                    </div>
+
+                    {/* <div className="file-input-wrapper">
+                      <button className="btn-file-input green">
+                        Upload File
+                      </button>
+                      <input
+                        type="file"
+                        name="file"
+                        onChange={this.handleselectedFile}
+                      />
+                    </div>
+                    <button
+                      className="btn-file-input green"
+                      onClick={this.handleUpload}
+                    >
+                      Upload
+                    </button> */}
+                  </div>
+                  <br />
+                  {/* <input
                       type="file"
                       name=""
                       id=""
                       onChange={this.handleselectedFile}
-                    />
-                    <button onClick={this.handleUpload}>Upload</button>
-                    <div> {Math.round(this.state.loaded, 2)} %</div>
-                    <Link to="/">
-                      <button onClick={this.handleLogout}>Logout</button>
-                    </Link>
-                  </div>
+                    /> */}
 
-                  <form role="form" class="form">
+                  {/* <FileUploader /> */}
+
+                  {/* <form role="form" class="form">
                     <div className="form-group">
                       <label for="file">File</label>
                       <input
@@ -135,11 +177,11 @@ class App extends Component {
                     >
                       Get Colours
                     </button>
-                  </form>
+                  </form> */}
 
                   <button
                     onClick={this.handleLogout}
-                    className="btn btn-outline btn-xl js-scroll-trigger"
+                    className="btn btn-outline btn-xl js-scroll-trigger green"
                   >
                     Logout
                   </button>
@@ -151,7 +193,7 @@ class App extends Component {
                     <div className="device">
                       <div className="screen">
                         <img
-                          src="img/demo-screen-1.jpg"
+                          src={require("./public/images/paint1.png")}
                           className="img-fluid"
                           alt=""
                         />
@@ -172,7 +214,7 @@ class App extends Component {
             <div className="row h-100">
               <div className="col-lg-7 my-auto">
                 <div className="header-content mx-auto">
-                  <h1 className="mb-5">
+                  <h1 className="mb-5 monospace">
                     MoodPlay plays music based on your mood...{" "}
                   </h1>
                   <a
@@ -189,7 +231,7 @@ class App extends Component {
                     <div className="device">
                       <div className="screen">
                         <img
-                          src="img/demo-screen-1.jpg"
+                          src={require("./public/images/demo-screen-1.jpg")}
                           className="img-fluid"
                           alt=""
                         />

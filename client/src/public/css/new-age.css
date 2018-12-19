@@ -162,11 +162,11 @@ header.masthead {
   padding-top: 150px;
   padding-bottom: 100px;
   color: white;
-  background: url("../images/bg-pattern.png"), #7b4397;
+  background: url("../images/bg-pattern.png"), #f6cb6c;
   background: url("../images/bg-pattern.png"),
-    -webkit-gradient(linear, right top, left top, from(#7b4397), to(#dc2430));
+    -webkit-gradient(linear, right top, left top, from(#f6cb6c), to(#b49bc8));
   background: url("../images/bg-pattern.png"),
-    linear-gradient(to left, #7b4397, #dc2430);
+    linear-gradient(to left, #f6cb6c, #b49bc8);
 }
 
 header.masthead .header-content {
@@ -290,10 +290,10 @@ section.features .feature-item i {
     linear,
     right top,
     left top,
-    from(#7b4397),
+    from(#00000),
     to(#dc2430)
   );
-  background: linear-gradient(to left, #7b4397, #dc2430);
+  background: linear-gradient(to left, #00000, #dc2430);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -445,8 +445,17 @@ footer ul li a.active {
 .btn-outline:active,
 .btn-outline.active {
   color: white;
-  border-color: #fdcc52;
-  background-color: #fdcc52;
+  border-color: #1db954;
+  background-color: #1db954;
+}
+
+.green {
+  background-color: #1db954;
+  border: #1db954;
+}
+
+.fs30 {
+  font-size: 80px;
 }
 
 .btn {
@@ -460,3 +469,71 @@ footer ul li a.active {
   font-size: 11px;
   padding: 15px 45px;
 }
+
+.file-input-wrapper {
+  width: 200px;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+}
+.file-input-wrapper > input[type="file"] {
+  font-size: 200px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+}
+.file-input-wrapper > .btn-file-input {
+  display: inline-block;
+  width: 200px;
+  color: white;
+  height: 40px;
+  border-radius: 300px;
+  font-family: "Lato", "Helvetica", "Arial", "sans-serif";
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* .uploader {
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  display: flex;
+  height: 300px;
+  justify-content: center;
+  outline: 3px dashed #ccc;
+  outline-offset: 5px;
+  position: relative;
+  width: 300px;
+}
+.uploader input {
+  display: none;
+}
+.uploader img,
+.uploader .icon {
+  pointer-events: none;
+}
+.uploader,
+.uploader .icon {
+  transition: all 100ms ease-in;
+}
+.uploader .icon {
+  color: #eee;
+  color: rgba(0, 0, 0, 0.2);
+  font-size: 5em;
+}
+.uploader img {
+  left: 50%;
+  opacity: 0;
+  max-height: 100%;
+  max-width: 100%;
+  position: absolute;
+  top: 50%;
+  transition: all 300ms ease-in;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+.uploader img.loaded {
+  opacity: 1;
+} */
