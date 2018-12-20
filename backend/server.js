@@ -99,7 +99,7 @@ const vision = require("@google-cloud/vision");
 
 // Creates a client
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: "MoodPlay-bb850b52febf.json"
+  keyFilename: "MoodPlay-e9a54cb87224.json"
 });
 //const request = { image: { source: { filename: inputFile } } };
 // Performs label detection on the image file
@@ -117,8 +117,6 @@ const client = new vision.ImageAnnotatorClient({
 // [END vision_quickstart]
 
 app.post("/upload", upload.single("file"), function(req, res, next) {
-  var token = req.session.passport.user.accessToken;
-  debugger;
   client
     .faceDetection(req.file.path)
     .then(results => {
@@ -127,63 +125,27 @@ app.post("/upload", upload.single("file"), function(req, res, next) {
       const numFaces = faces.length;
       console.log("Found " + numFaces + (numFaces === 1 ? " face" : " faces"));
 
-      const joy = results[0].faceAnnotations[0].joyLikelihood;
-      const sorrow = results[0].faceAnnotations[0].sorrowLikelihood;
-      const anger = results[0].faceAnnotations[0].angerLikelihood;
-
-      if (joy === "VERY_LIKELY") {
-        min_valence === "0.85";
-        max_valence === "1";
-        min_dance === "0.8";
-        max_dance === "1";
-      }
-      if (
-        joy === "LIKELY" &&
-        (sorrow === "VERY_UNLIKELY" || sorrow === "UNLIKELY")
-      ) {
-        min_valence === "0.65";
-        max_valence === "0.8";
-        min_dance === "0.5";
-        max_dance === "0.7";
-      }
-      // if (sorrow === "VERY_LIKELY") {
-      //   valence === "0.85";
-      //   dance === "0.8";
-      // }
-      // UNKNOWN;
-      // VERY_UNLIKELY;
-      // UNLIKELY;
-      // POSSIBLE;
-      // LIKELY;
-      // VERY_LIKELY;
-
-      debugger;
-
-      // const joyLikelihood = res.data[0].faceAnnotations[0].joyLikelihood;
-
-      // console.log("Faces:");
-      // faces.forEach((face, i) => {
-      //   console.log(`  Face #${i + 1}:`);
-      //   console.log(`    Joy: ${face.joyLikelihood}`);
-      //   console.log(`    Anger: ${face.angerLikelihood}`);
-      //   console.log(`    Sorrow: ${face.sorrowLikelihood}`);
-      //   console.log(`    Surprise: ${face.surpriseLikelihood}`);
-      // });
-      // res.send(JSON.stringify(results));
-      return Promise.resolve(results);
+      res.send(JSON.stringify(results));
+      // return Promise.resolve(results);
     })
-    .then(results => {
-      return axios.get(
-        `https://api.spotify.com/v1/recommendations?limit=20&seed_genres=dance%2Celectronic%2Cpop%2Chouse%2Ctrance&min_valence=0.3&max_valence=1`,
-        {
-          headers: { Authorization: "Bearer " + token }
-        }
-      );
-    })
-    .then(response => {
-      console.log(response);
-      debugger;
-      res.json(response.data.tracks);
+    // .then(response => {
+    //   console.log(response);
+    //   res.json(response.data.tracks);
+    // })
+    .catch(err => {
+      console.error("ERROR:", err);
+    });
+});
+
+app.post("/playmood", function(req, res, next) {
+  var token = req.session.passport.user.accessToken;
+  axios
+    .get(
+      `https://api.spotify.com/v1/recommendations?limit=20&seed_genres=dance%2Celectronic%2Cpop%2Chouse%2Ctrance&min_valence=0.3&max_valence=1`,
+      { headers: { Authorization: "Bearer " + token } }
+    )
+    .then(result => {
+      res.json(result.data.tracks);
     })
     .catch(err => {
       console.error("ERROR:", err);
