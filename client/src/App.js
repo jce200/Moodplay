@@ -1,18 +1,11 @@
-// /client/App.js
-// import "./public/css/style.css";
 import config from "./config.json";
 import React, { Component } from "react";
-// import { Link, Route, Switch, Redirect } from "react-router-dom";
 import ReactAudioPlayer from "react-audio-player";
-// import Home from "./components/homepage";
-// import Navbar from "./components/navBar";
-// import NotFound from "./components/notFound";
-// import FileUploader from "./components/fileUpload";
-// import audio from "https://p.scdn.co/mp3-preview/6247205863448da37f377a649a330458f3ec7487?cid=4184cfefa27d4bfaa7b5affd6d1e0b91";
 import axios from "axios";
 
-const endpoint = "http://localhost:3000/upload";
-const endpoint2 = "http://localhost:3000/logout";
+const endpoint = "/upload";
+const endpoint2 = "/logout";
+const endpoint3 = "/playmood";
 
 class App extends Component {
   constructor(props) {
@@ -26,7 +19,8 @@ class App extends Component {
       hasTracks: false,
       joy: false,
       sorrow: false,
-      anger: false
+      anger: false,
+      preview: ""
     };
   }
 
@@ -75,29 +69,73 @@ class App extends Component {
       .then(res => {
         this.setState({ joy: false });
         this.setState({ sorrow: false });
+        this.setState({ sorrow: false });
 
         const joy = res.data[0].faceAnnotations[0].joyLikelihood;
         const anger = res.data[0].faceAnnotations[0].angerLikelihood;
         const sorrow = res.data[0].faceAnnotations[0].sorrowLikelihood;
 
+        var min_valence = "0.0";
+        var max_valence = "1.0";
+        var min_danceability = "0.0";
+        var max_danceability = "1.0";
+
+        // The overall loudness of a track in decibels (dB).
+        // Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks.
+        // Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude).
+        // Values typical range between -60 and 0 db.
+        // let min_loudness = "-60";
+        // let max_loudness = "0";
+
+        let min_tempo = "0";
+        let max_tempo = "100";
+
         if (joy === "VERY_LIKELY" || joy === "LIKELY" || joy === "POSSIBLE") {
-          this.setState({ joy: true });
+          this.setState({ joy: true, hasTracks: true });
+          min_valence = "0.5";
+          max_valence = "1.0";
+          min_danceability = "0.7";
         }
         if (
           sorrow === "VERY_LIKELY" ||
           sorrow === "LIKELY" ||
           joy === "VERY_UNLIKELY"
         ) {
-          this.setState({ sorrow: true });
+          this.setState({ sorrow: true, hasTracks: true });
+          min_valence = "0.0";
+          max_valence = "0.3";
+          max_danceability = "0.6";
         }
         if (anger === "VERY_LIKELY" || anger === "LIKELY") {
-          this.setState({ anger: true, joy: false });
+          this.setState({ anger: true, joy: false, hasTracks: true });
+          // min_valence = "0.0";
+          max_valence = "0.6";
+          // max_danceability = "0.6";
+          // min_loudness = "0.7";
+          // min_tempo = "60";
         }
-        this.setState({ hasTracks: true });
+        console.log(min_danceability);
+        console.log(min_valence);
+        axios
+          .post(endpoint3, {
+            withCredentials: true,
+            min_valence: min_valence,
+            max_valence: max_valence,
+            min_danceability: min_danceability,
+            max_danceability: max_danceability,
+            // min_loudness: min_loudness,
+            // max_loudness: max_loudness,
+            min_tempo: min_tempo,
+            max_tempo: max_tempo
+          })
+          .then(result => {
+            this.setState({ preview: result.data });
+          })
+          .catch(error => {
+            console.log(error);
+          });
       })
-      .catch(error => {
-        debugger;
-      });
+      .catch(error => {});
   };
   handleLogout = () => {
     axios
@@ -144,15 +182,6 @@ class App extends Component {
   }
 
   renderAudio() {
-    if (this.state.hasTracks)
-      return (
-        <React.Fragment>
-          <ReactAudioPlayer
-            src="https://p.scdn.co/mp3-preview/6247205863448da37f377a649a330458f3ec7487?cid=4184cfefa27d4bfaa7b5affd6d1e0b91"
-            controls
-          />
-        </React.Fragment>
-      );
     if (!this.state.hasTracks)
       return (
         <React.Fragment>
@@ -183,6 +212,12 @@ class App extends Component {
               ...and moodplay will play you mood.
             </h2>
           </div>
+        </React.Fragment>
+      );
+    if (this.state.hasTracks)
+      return (
+        <React.Fragment>
+          <ReactAudioPlayer src={this.state.preview} controls />
         </React.Fragment>
       );
   }
@@ -217,7 +252,7 @@ class App extends Component {
                 <div className="device">
                   <div className="screen">
                     <img
-                      src={require("./public/images/paint8.png")}
+                      src={require("./public/images/paint.png")}
                       className="img-fluid"
                       alt=""
                     />
@@ -252,7 +287,7 @@ class App extends Component {
                   <div className="device">
                     <div className="screen">
                       <img
-                        src={require("./public/images/paint8.png")}
+                        src={require("./public/images/paint.png")}
                         className="img-fluid"
                         alt=""
                       />
