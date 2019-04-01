@@ -19,29 +19,29 @@ const app = express();
 const router = express.Router();
 const serveStatic = require("serve-static");
 
-const fs = require("fs");
-const http = require("http");
-const https = require("https");
+// const fs = require("fs");
+// const http = require("http");
+// const https = require("https");
 
-// Certificate
-const privateKey = fs.readFileSync(
-  "/etc/letsencrypt/live/www.upcharge.nl/privkey.pem",
-  "utf8"
-);
-const certificate = fs.readFileSync(
-  "/etc/letsencrypt/live/www.upcharge.nl/cert.pem",
-  "utf8"
-);
-const ca = fs.readFileSync(
-  "/etc/letsencrypt/live/www.upcharge.nl/chain.pem",
-  "utf8"
-);
+// // Certificate
+// const privateKey = fs.readFileSync(
+//   "/etc/letsencrypt/live/www.upcharge.nl/privkey.pem",
+//   "utf8"
+// );
+// const certificate = fs.readFileSync(
+//   "/etc/letsencrypt/live/www.upcharge.nl/cert.pem",
+//   "utf8"
+// );
+// const ca = fs.readFileSync(
+//   "/etc/letsencrypt/live/www.upcharge.nl/chain.pem",
+//   "utf8"
+// );
 
-const credentials = {
-  key: privateKey,
-  cert: certificate,
-  ca: ca
-};
+// const credentials = {
+//   key: privateKey,
+//   cert: certificate,
+//   ca: ca
+// };
 
 // if (config.environment == "production") {
 app.use(express.static(path.join(__dirname, "moodplay")));
@@ -69,10 +69,7 @@ const upload = multer({ dest: "uploads/" });
 
 const dbRoute = "mongodb://jce200:rwsX9hN(@ds135974.mlab.com:35974/moodplay";
 
-mongoose.connect(
-  dbRoute,
-  { useNewUrlParser: true }
-);
+mongoose.connect(dbRoute, { useNewUrlParser: true });
 
 let db = mongoose.connection;
 
@@ -253,15 +250,17 @@ app.get("/logout", function(req, res) {
 
 app.use(serveStatic(path.join(__dirname, "public")));
 // launch our backend into a port
-// app.listen(API_PORT, () => console.log(`LISTENING ON PORT ${API_PORT}`));
+app.listen(API_PORT, () => console.log(`LISTENING ON PORT ${API_PORT}`));
 
-const httpServer = http.createServer(app);
-const httpsServer = https.createServer(credentials, app);
+// PRODUCTION
 
-httpServer.listen(80, () => {
-  console.log("HTTP Server running on port 80");
-});
+// const httpServer = http.createServer(app);
+// const httpsServer = https.createServer(credentials, app);
 
-httpsServer.listen(443, () => {
-  console.log("HTTPS Server running on port 443");
-});
+// httpServer.listen(80, () => {
+//   console.log("HTTP Server running on port 80");
+// });
+
+// httpsServer.listen(443, () => {
+//   console.log("HTTPS Server running on port 443");
+// });
