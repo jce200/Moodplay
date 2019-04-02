@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/jce200/Moodplay.svg?branch=master)](https://travis-ci.org/jce200/Moodplay)
-
 # Moodplay
 Moodplay plays music based on your mood.
 
