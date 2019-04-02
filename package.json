@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "backend": "file:backend",
+    "client": "file:client",
     "concurrently": "^4.1.0",
     "nodemon": "^1.18.10"
   }
