@@ -8,3 +8,7 @@ A webapp using Google Vision API to analyze an uploaded image of your face. It d
 
 ## Demo
 Here is a working live demo :  https://moodplay.nl/
+
+## API Reference
+[Google Cloud Vision API](https://cloud.google.com/vision/docs/apis)
+[Spotify API](https://developer.spotify.com/documentation/web-api/)
