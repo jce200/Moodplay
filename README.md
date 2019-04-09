@@ -28,7 +28,6 @@ npm install
 const appKey = "ENTER YOUR CLIENT ID";
 const appSecret = "ENTER YOUR CLIENT SECRET";
 ```
-keyFilename: "ENTER GOOGLE VISION API KEY FILENAME (JSON)"
 
 6. Enter your Google Vision API Key filename in `server.js`
 ```JS
