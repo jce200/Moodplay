@@ -67,7 +67,7 @@ const upload = multer({ dest: "uploads/" });
 
 // app.use("/public", express.static(__dirname + "/public"));
 
-const dbRoute = "mongodb://jce200:rwsX9hN(@ds135974.mlab.com:35974/moodplay";
+const dbRoute = "ENTER YOUR MONGODB URI";
 
 mongoose.connect(dbRoute, { useNewUrlParser: true });
 
