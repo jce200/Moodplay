@@ -12,21 +12,23 @@ Here is a working live demo :  https://moodplay.nl/
 ## Installation
 
 1. Get a free API Key at [https://developer.spotify.com/](https://developer.spotify.com/)
+
 2. Create a free MongoDB database at [https://mlab.com](https://mlab.com)
-2. Clone the repo
+
+3. Clone the repo
 ```sh
 git clone https://github.com/jce200/Moodplay.git
 ```
-3. Install NPM packages
+4. Install NPM packages
 ```sh
 npm install
 ```
-4. Enter your API Key and Secret in `server.js`
+5. Enter your API Key and Secret in `server.js`
 ```JS
 const appKey = "ENTER YOUR CLIENT ID";
 const appSecret = "ENTER YOUR CLIENT SECRET";
 ```
-5. Enter your MongoDB URI `server.js`
+6. Enter your MongoDB URI `server.js`
 ```JS
 const dbRoute = "ENTER YOUR MONGODB URI";
 ```
