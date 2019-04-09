@@ -20,7 +20,7 @@ git clone https://github.com/jce200/Moodplay.git
 ```sh
 npm install
 ```
-4. Enter your API in `server.js`
+4. Enter your API Key and Secret in `server.js`
 ```JS
 const appKey = "ENTER YOUR CLIENT ID";
 const appSecret = "ENTER YOUR CLIENT SECRET";
