@@ -11,7 +11,7 @@ Here is a working live demo :  https://moodplay.nl/
 
 ## Installation
 
-1. Get a free API Key at [https://developer.spotify.com/](https://developer.spotify.com/)
+1. Get a free API Key at [https://developer.spotify.com/](https://developer.spotify.com/) and create an API key (JSON) at [https://cloud.google.com/vision/](https://cloud.google.com/vision/)
 
 2. Create a free MongoDB database at [https://mlab.com](https://mlab.com)
 
