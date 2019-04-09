@@ -105,7 +105,7 @@ const vision = require("@google-cloud/vision");
 
 // Creates a client
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: "MoodPlay-37ae218d42c3.json"
+  keyFilename: "ENTER GOOGLE VISION API KEY FILENAME (JSON)"
 });
 
 app.post("/upload", upload.single("file"), function(req, res, next) {
