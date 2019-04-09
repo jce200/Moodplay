@@ -28,7 +28,14 @@ npm install
 const appKey = "ENTER YOUR CLIENT ID";
 const appSecret = "ENTER YOUR CLIENT SECRET";
 ```
-6. Enter your MongoDB URI `server.js`
+keyFilename: "ENTER GOOGLE VISION API KEY FILENAME (JSON)"
+
+6. Enter your Google Vision API Key filename in `server.js`
+```JS
+keyFilename: "ENTER GOOGLE VISION API KEY FILENAME (JSON)"
+```
+
+7. Enter your MongoDB URI `server.js`
 ```JS
 const dbRoute = "ENTER YOUR MONGODB URI";
 ```
