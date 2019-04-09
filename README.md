@@ -13,7 +13,8 @@ Here is a working live demo :  https://moodplay.nl/
 * [Twitter Bootstrap](https://getbootstrap.com/)
 * [Node.js](https://nodejs.org/en/docs/)
 * [Express.js](https://expressjs.com/)
-* [REACT.js](https://reactjs.org/)
+* [React.js](https://reactjs.org/)
+* [MongoDB](https://www.mongodb.com/)
 
 ## API Reference
 * [Google Cloud Vision API](https://cloud.google.com/vision/docs/apis)
